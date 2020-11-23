@@ -2,20 +2,22 @@ library(factoextra)
 library(tidyverse)
 library(twitteR)
 library(tidytext)
-source("authenticate.R")
+source("tweet-scraping.R")
 
-# Input values
+#=======================Input values===============================
+# Topic to search tweets by.
 topic <- "trump"
+# Number of tweets to analyze.
 number_of_tweets <- 1000
-exclude_words <- c(topic, "https", "t.co", "rt", "amp","travelban")
-
-authenticate()
-
-fn_twitter <- searchTwitter(topic,n=number_of_tweets,lang="en")
-fn_twitter_df <- twListToDF(fn_twitter)
+# Words to exclude from keyword analysis. "Common" english words are already excluded.
+exclude_words <- c(topic, "https", "t.co", "rt", "amp")
+#==================================================================
 
 
-tweet_words <- fn_twitter_df %>% select(id, text) %>% unnest_tokens(word,text)
+# Scrap tweets live from Twitter.
+tweets_df <- scrape_tweets(topic, number_of_tweets)
+
+tweet_words <- tweets_df %>% select(id, text) %>% unnest_tokens(word,text)
 
 
 tweet_words %>% count(word,sort=T) %>% slice(1:20) %>% 
