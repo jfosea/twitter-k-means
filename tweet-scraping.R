@@ -1,6 +1,10 @@
 library(twitteR)
 
-
+#' Scrapes tweets from Twitter
+#'
+#' @param topic string of topic to search for.
+#' @param number_of_tweets int number of tweets to scrape.
+#' @return dataframe of tweets
 scrape_tweets <- function(topic, number_of_tweets) {
   authenticate()
   
@@ -8,7 +12,7 @@ scrape_tweets <- function(topic, number_of_tweets) {
   twListToDF(fn_twitter)
 }
 
-
+#' Connects to Twitter API
 authenticate <- function() {
   consumer_key <- "8JUJeufLuUlqyqYsbxFBJp7aB"
   consumer_secret <- "l1tLcsUIU753GyDuttCDT3ACKguuPGD4Lnd7JRJXHEaEy5tJu1"

@@ -15,9 +15,9 @@ exclude_words <- c(topic, "https", "t.co", "rt", "amp")
 
 
 # Scrap tweets live from Twitter.
-tweets_df <- scrape_tweets(topic, number_of_tweets)
+df_tweets <- scrape_tweets(topic, number_of_tweets)
 
-tweet_words <- tweets_df %>% select(id, text) %>% unnest_tokens(word,text)
+tweet_words <- df_tweets %>% select(id, text) %>% unnest_tokens(word,text)
 
 
 tweet_words %>% count(word,sort=T) %>% slice(1:20) %>% 
