@@ -58,12 +58,15 @@ process_tweets <- function(topic, tweets, number_of_tweets) {
   # select only the numerical variable
   tweets$score <- score
   tweets_num <- select(tweets, total_tweets, followers, retweetCount, score)
-  tweets_num$num_created <- as.numeric(tweets$created)
-  tweets_num$num_user_create <- as.numeric(tweets$user_created)
+  
+  # transform different categorical values into numerics
+  tweets_num$isRetweet <- as.numeric(tweets$isRetweet)
+  tweets_num$user_created <- as.numeric(tweets$user_created)
+  tweets_num$created <- as.numeric(tweets$created)
+  tweets_num$location <- as.numeric(as.factor(tweets$location))
   
   
-  # rename rows to username and scale the data and rename the rows
-  row.names(tweets_num) <- make.names(tweets$score, unique=TRUE)
+  # scale and return dataframe
   scale(tweets_num)
 
 }
