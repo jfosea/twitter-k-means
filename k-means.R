@@ -2,7 +2,7 @@ library(factoextra)
 library(tidyverse)
 library(twitteR)
 library(tidytext)
-source("authenticate.R")
+source("tweet-scraping.R")
 
 
 # Input values
@@ -23,7 +23,6 @@ my_stop_words <- stop_words %>% select(-lexicon) %>%
   bind_rows(exclude)
 
 
-authenticate()
 
 # Search for tweets related to the topic word
 tweets_raw <- searchTwitter(topic,n=number_of_tweets,lang="en")
