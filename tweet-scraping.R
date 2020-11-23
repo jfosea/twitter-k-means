@@ -1,5 +1,3 @@
-library(twitteR)
-
 #' Scrapes tweets from Twitter
 #'
 #' @param topic string of topic to search for.
