@@ -1,15 +1,8 @@
-source("libraries.R")
 source("tweet-scraping.R")
 source("data-transform.R")
 
 
-# Load needed libraries and authenticate using Twitter tokens
-load_libraries()
-setup_directory()
-authenticate()
-
-
-# Choose topic word
+# Choose topic word and create data frame used for algorithm
 word <- "trump"
 n <- 100
 tweet_df <- scrape_tweets(word, n)
