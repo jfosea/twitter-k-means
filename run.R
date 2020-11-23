@@ -5,6 +5,7 @@ source("data-transform.R")
 
 # Load needed libraries and authenticate using Twitter tokens
 load_libraries()
+setup_directory()
 authenticate()
 
 
