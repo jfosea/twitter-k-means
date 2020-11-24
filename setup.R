@@ -7,7 +7,7 @@ setwd(dirname(rstudioapi::getSourceEditorContext()$path))
 library(utils) #needed for the source to load installed.packages()
 options(repos=c("https://cran.rstudio.com", getOption("repos") ) )
 # designate packages to install/load
-all_pkgs <- c("factoextra","tidyverse","twitteR", "tidytext", "hash", "openssl", "httpuv", "gridExtra")
+all_pkgs <- c("factoextra","tidyverse","rtweet", "tidytext", "hash", "openssl", "httpuv", "gridExtra", "devtools")
 # find packages that need to be installed
 already_installed <- rownames(installed.packages())
 to_install <- setdiff(all_pkgs, already_installed)
