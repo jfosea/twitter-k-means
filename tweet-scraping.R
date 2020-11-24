@@ -4,20 +4,29 @@
 #' @param number_of_tweets int number of tweets to scrape.
 #' @return dataframe of tweets
 scrape_tweets <- function(topic, number_of_tweets) {
-  authenticate()
+  token <- get_authentication_token()
 
-  fn_twitter <- searchTwitter(topic,n=number_of_tweets,lang="en")
-  twListToDF(fn_twitter)
+  fn_twitter <- rtweet::search_tweets(
+    q = topic,
+    n = number_of_tweets,
+    token = token,
+    retryonratelimit = TRUE)
+
+  # twListToDF(fn_twitter)
 }
 
-#' Connects to Twitter API
-authenticate <- function() {
+#' Get authentication token for accessing Twitter API
+#'
+#' @returns string token to confirm credential authentication
+get_authentication_token <- function() {
   credentials <- read.csv(file="credentials.csv")[1,]
-  consumer_key <- credentials[1]
-  consumer_secret <- credentials[2]
-  access_token <- credentials[3]
-  access_secret <- credentials[4]
+  token <- create_token(
+    app="CPSC571-F20-Problem3",
+    consumer_key = credentials$consumer_key,
+    consumer_secret = credentials$consumer_secret,
+    access_token = credentials$access_token,
+    access_secret = credentials$access_token)
 
-  setup_twitter_oauth(consumer_key, consumer_secret, access_token, access_secret)
+  return(token)
 }
 
