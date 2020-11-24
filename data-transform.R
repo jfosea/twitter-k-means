@@ -23,18 +23,15 @@ process_tweets <- function(topic, tweets, number_of_tweets) {
   # get user information
   followers <- c()
   user_created <- c()
-  location <- c()
   total_tweets <- c()
   user_dictionary <- hash()
   for (i in 1:number_of_tweets) {
     user <- get_user(tweets$screenName[i], user_dictionary)
     followers <- append(followers, user$followersCount)
-    location <- append(location, user$location)
     total_tweets <- append(total_tweets, user$statusesCount)
   }
   
   tweets$followers <- followers
-  tweets$location <- location
   tweets$total_tweets <- total_tweets
   
   # Separate each tweet by word
@@ -61,8 +58,6 @@ process_tweets <- function(topic, tweets, number_of_tweets) {
   # transform different categorical values into numerics
   tweets_num$isRetweet <- as.numeric(tweets$isRetweet)
   tweets_num$created <- as.numeric(tweets$created)
-  tweets_num$location <- as.numeric(as.factor(tweets$location))
-  
   
   # scale and return dataframe
   return(list(tweets, scale(tweets_num)))
