@@ -25,8 +25,9 @@ process_tweets <- function(topic, tweets, number_of_tweets) {
   user_created <- c()
   location <- c()
   total_tweets <- c()
+  user_dictionary <- hash()
   for (i in 1:number_of_tweets) {
-    user <- getUser(tweets$screenName[i])
+    user <- get_user(tweets$screenName[i], user_dictionary)
     followers <- append(followers, user$followersCount)
     location <- append(location, user$location)
     total_tweets <- append(total_tweets, user$statusesCount)
@@ -99,4 +100,22 @@ top_5_tweets <- function(data, x) {
     top_5 <- rbind(top_5,data.frame(data[unlist(tweet_indices[i]),], cluster=i))
   }
   return(top_5)
+}
+
+
+#' Get the user object corresponding to the given user_name.
+#' 
+#' @param user_name string of the username to get the user object of.
+#' @param user_dictionary has<string, user> diciontary of usernames and corresponding user objects for users already found. This exists to reduce the number of API calls to retrieve users.
+#' @returns the user object corresponding to the given user_name.
+get_user <- function(user_name, user_dictionary) {
+  #return(getUser(user_name))
+  
+  if (!has.key(user_name, user_dictionary)) {
+    user <- getUser(user_name)
+    user_dictionary[user_name] <- user
+  } else {
+    user <- user_dictionary[user_name]
+  }
+  return(user)
 }

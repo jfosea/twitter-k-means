@@ -5,18 +5,19 @@
 #' @return dataframe of tweets
 scrape_tweets <- function(topic, number_of_tweets) {
   authenticate()
-  
+
   fn_twitter <- searchTwitter(topic,n=number_of_tweets,lang="en")
   twListToDF(fn_twitter)
 }
 
 #' Connects to Twitter API
 authenticate <- function() {
-  consumer_key <- "8JUJeufLuUlqyqYsbxFBJp7aB"
-  consumer_secret <- "l1tLcsUIU753GyDuttCDT3ACKguuPGD4Lnd7JRJXHEaEy5tJu1"
-  access_token <- "377520293-EvuYxzVO5aZoTtXA0otIRfqxYG6HqCEDhjuJt4BK"
-  access_secret <- "LbvA7nKJY0Wx4lR8QOt7gxb1pKRajA8gJi7MtXux0nQdh"
-  
+  credentials <- read.csv(file="credentials.csv")[1,]
+  consumer_key <- credentials[1]
+  consumer_secret <- credentials[2]
+  access_token <- credentials[3]
+  access_secret <- credentials[4]
+
   setup_twitter_oauth(consumer_key, consumer_secret, access_token, access_secret)
 }
 
