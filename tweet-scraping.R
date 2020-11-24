@@ -8,9 +8,9 @@
 scrape_tweets <- function(topic, number_of_tweets, live=FALSE) {
   if (live==FALSE) {
     # read from saved .csv files
-    tweets <- read.csv("tweets.csv")
-    df <- read.csv("scaled_tweets.csv")
-    common_words <- read.csv("common_words.csv")
+    tweets <- read.csv("datasets/tweets.csv")
+    df <- read.csv("datasets/scaled_tweets.csv")
+    common_words <- read.csv("datasets/common_words.csv")
     return(list(tweets, df, common_words))
   }
   if (live==TRUE) {

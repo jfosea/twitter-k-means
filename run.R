@@ -9,9 +9,6 @@ data <- scrape_tweets(word, n, live=FALSE)
 tweets <- as.data.frame(data[1])
 df <- as.data.frame(data[2])
 common_words <- as.data.frame(data[3])
-View(df)
-View(tweets)
-View(common_words)
 
 # ======================= KMEANS =========================
 # testing out different number of clusters
@@ -58,7 +55,7 @@ p8
 # compare total tweets count in each cluster
 p9 <- quantile_plot(tweets$total_tweets, tweets$cluster) + ggtitle("Total Tweets Count")
 p9
-grid.arrange(p7, p8, p9,p6, nrow = 2)
+grid.arrange(p7, p8, p9, nrow = 2)
 
 # compare 
 top_5 <- top_n_tweets(tweets,k3,5)

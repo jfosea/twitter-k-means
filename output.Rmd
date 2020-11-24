@@ -1,0 +1,128 @@
+---
+title: "Using k-Means to Cluster Tweets"
+author: "Jana Osea and Evan Quan"
+date: "November 24, 2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+all_pkgs <- c("factoextra","tidyverse","twitteR", "tidytext", "hash", "openssl", "httpuv", "gridExtra", "hrbrthemes", "kableExtra")
+sapply(all_pkgs, library, character.only=TRUE, logical.return=TRUE)
+```
+
+## Dataset Previews
+
+We will use three datasets scraped from Twitter on November 22, 2020 using $n=100$ tweets.
+
+1. Raw Scraped Dataset
+
+```{r, echo=FALSE}
+source("tweet-scraping.R")
+source("data-transform.R")
+
+# ======================= INPUT =========================
+word <- "biden"
+n <- 100
+data <- scrape_tweets(word, n, live=FALSE)
+tweets <- as.data.frame(data[1])
+df <- as.data.frame(data[2])
+common_words <- as.data.frame(data[3])
+```
+
+
+    ```{r, echo=FALSE}
+    head(tweets, 3) %>%
+      kbl() %>%
+      kable_styling()
+    ```
+
+2. Processed Scaled Tweets
+
+    ```{r, echo=FALSE}
+    head(df, 3) %>%
+      kbl() %>%
+      kable_styling()
+    ```
+
+3. Top 10 Common Words
+
+    ```{r, echo=FALSE}
+    head(common_words, 3) %>%
+      kbl() %>%
+      kable_styling()
+    ```
+    
+## k-Means Clustering 
+
+We plotted the cluster plots with $k=2,3,4,5$ clusters correspondingly.
+```{r, echo=FALSE}
+k2 <- kmeans(df,2,nstart=25)
+k3 <- kmeans(df,3,nstart=25)
+k4 <- kmeans(df,4,nstart=25)
+k5 <- kmeans(df,5,nstart=25)
+
+# plots to compare
+p1 <- fviz_cluster(k2, geom = "point", data = df) + ggtitle("k = 2")
+p2 <- fviz_cluster(k3, geom = "point",  data = df) + ggtitle("k = 3")
+p3 <- fviz_cluster(k4, geom = "point",  data = df) + ggtitle("k = 4")
+p4 <- fviz_cluster(k5, geom = "point",  data = df) + ggtitle("k = 5")
+grid.arrange(p1, p2, p3, p4, nrow = 2)
+```
+
+We choose $k=3$ as our chosen number of clusters and we will now analyze.
+
+## $k=3$ Means Clustering Analysis
+
+#### Variation Between, Within and Total
+
+```{r, echo=FALSE}
+data.frame("Sum of Squares"= c("Between", "Total"), Values=c(k3$betweenss, k3$totss)) %>% kbl() %>%
+kable_styling()
+data.frame(Cluster= c(1,2,3),'Within Sum of Squares' =c(k3$withinss)) %>% kbl() %>%
+kable_styling()
+```
+
+#### 1. Common Words
+
+```{r, echo=FALSE}
+tweets$cluster <- k3$cluster
+# plot of 10 most common words
+p5 <- ggplot(common_words, aes(x = reorder(word, n, function(n) -n), y=n)) + 
+  geom_bar(stat="identity", fill="lightblue")+ theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+  xlab("") + ggtitle("Top 10 Most Common Words")
+p5
+```
+    
+#### 2. Hot Word Scores
+
+```{r, echo=FALSE}
+p6 <- count(tweets, cluster, score) %>% ggplot( aes(fill=score, y=n, x=cluster)) + 
+  geom_bar(position="stack", stat="identity")+theme_minimal() + 
+  ggtitle("Score Distribution Grouped by Clusters")
+p6
+```
+
+#### 3. Compare Characteristics of Each Cluster
+
+```{r, echo=FALSE}
+p7 <- quantile_plot(tweets$retweetCount, tweets$cluster) + ggtitle("Retweet Count")
+# compare follower count in each cluster
+p7
+p8 <- quantile_plot(tweets$followers, tweets$cluster) + ggtitle("Followers Count")
+p8
+# compare total tweets count in each cluster
+p9 <- quantile_plot(tweets$total_tweets, tweets$cluster) + ggtitle("Total Tweets Count")
+p9
+grid.arrange(p7, p8, p9, nrow = 2)
+```
+
+
+#### 4. Top 5 Nearest Tweets to Each Centroid Cluster
+
+```{r, echo=FALSE}
+top_5 <- top_n_tweets(tweets,k3,5)
+top_5 %>% group_by(cluster) %>% select(screenName, followers, total_tweets, location, score) %>% kbl() %>%
+kable_styling()
+```
+
+
