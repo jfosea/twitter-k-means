@@ -7,12 +7,12 @@
 process_tweets <- function(topic, tweets, number_of_tweets) {
   
   exclude <- data.frame(word = c(topic,
-                                 paste0(topic, c("'s" , "’s", "s")),
+                                 paste0(topic, c("'s" , "'s", "s")),
                                  "https",
                                  "t.co",
                                  "rt",
                                  "amp",
-                                 "it’s",
+                                 "it's",
                                  paste0(1:100)))
   
   
