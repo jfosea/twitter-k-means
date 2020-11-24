@@ -28,13 +28,11 @@ process_tweets <- function(topic, tweets, number_of_tweets) {
   for (i in 1:number_of_tweets) {
     user <- getUser(tweets$screenName[i])
     followers <- append(followers, user$followersCount)
-    user_created <- append(user_created, as.Date(user$created))
     location <- append(location, user$location)
     total_tweets <- append(total_tweets, user$statusesCount)
   }
   
   tweets$followers <- followers
-  tweets$user_created <- user_created
   tweets$location <- location
   tweets$total_tweets <- total_tweets
   
@@ -61,7 +59,6 @@ process_tweets <- function(topic, tweets, number_of_tweets) {
   
   # transform different categorical values into numerics
   tweets_num$isRetweet <- as.numeric(tweets$isRetweet)
-  tweets_num$user_created <- as.numeric(tweets$user_created)
   tweets_num$created <- as.numeric(tweets$created)
   tweets_num$location <- as.numeric(as.factor(tweets$location))
   
