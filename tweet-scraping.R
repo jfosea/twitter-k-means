@@ -2,12 +2,30 @@
 #'
 #' @param topic string of topic to search for.
 #' @param number_of_tweets int number of tweets to scrape.
+#' @param live boolean value that if TRUE, live scrape of tweets is to be returned
+#' or if FALSE, premade tweets are returned
 #' @return dataframe of tweets
-scrape_tweets <- function(topic, number_of_tweets) {
-  authenticate()
-
-  fn_twitter <- searchTwitter(topic,n=number_of_tweets,lang="en")
-  twListToDF(fn_twitter)
+scrape_tweets <- function(topic, number_of_tweets, live=FALSE) {
+  if (live==FALSE) {
+    # read from saved .csv files
+    tweets <- read.csv("tweets.csv")
+    df <- read.csv("scaled_tweets.csv")
+    common_words <- read.csv("common_words.csv")
+    return(list(tweets, df, common_words))
+  }
+  if (live==TRUE) {
+    authenticate()
+    # scrape from Twitter
+    fn_twitter <- searchTwitter(topic,n=number_of_tweets,lang="en")
+    df_raw <- twListToDF(fn_twitter) 
+    # Clean and prepare analytical dataset
+    processed_data <- process_tweets(topic, df_raw, number_of_tweet)
+    # Separate results
+    tweets <- as.data.frame(processed_data[1])
+    df <- as.data.frame(processed_data[2])
+    common_words <- as.data.frame(processed_data[3])
+    return(list(tweets, df, common_words))
+  }
 }
 
 #' Connects to Twitter API

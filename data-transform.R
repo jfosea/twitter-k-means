@@ -23,8 +23,8 @@ process_tweets <- function(topic, tweets, number_of_tweets) {
   # get user information
   followers <- c()
   user_created <- c()
-  location <- c()
   total_tweets <- c()
+  location <- c()
   user_dictionary <- hash()
   for (i in 1:number_of_tweets) {
     user <- get_user(tweets$screenName[i], user_dictionary)
@@ -61,45 +61,51 @@ process_tweets <- function(topic, tweets, number_of_tweets) {
   # transform different categorical values into numerics
   tweets_num$isRetweet <- as.numeric(tweets$isRetweet)
   tweets_num$created <- as.numeric(tweets$created)
-  tweets_num$location <- as.numeric(as.factor(tweets$location))
   
   
   # scale and return dataframe
-  return(list(tweets, scale(tweets_num)))
+  return(list(tweets, scale(tweets_num), common_words))
 
 }
 
-
-
-top_5_tweets_indices <- function (x) {
+#' Obtains n tweets in cluster closest to its centroid
+#'
+#' @param data dataframe that contains all tweet characteristics
+#' @param x kmeans object of desired length of clusters
+#' @param n int number of tweets to obtain from each cluster
+#' @return dataframe of the top n closest tweets to centroids
+top_n_tweets <- function(data, x, n) {
   tweet_indices <- rep(0, length(x$centers[,1]))
   for (i in 1:length(x$centers[,1])) {
     ind <- which(x$cluster==i)
     distances <- rowSums(df[ind,] - x$centers[i,])^2
     distdata <- data.frame(ind, distances)
-    a <- distdata %>% arrange(distances) %>% head(5)%>% select(ind) 
-    tweet_indices[i] <- a
-  }
-  return(tweet_indices)
-}
-
-
-
-top_5_tweets <- function(data, x) {
-  tweet_indices <- rep(0, length(x$centers[,1]))
-  for (i in 1:length(x$centers[,1])) {
-    ind <- which(x$cluster==i)
-    distances <- rowSums(df[ind,] - x$centers[i,])^2
-    distdata <- data.frame(ind, distances)
-    a <- distdata %>% arrange(distances) %>% head(5)%>% select(ind) 
+    a <- distdata %>% arrange(distances) %>% head(n)%>% select(ind) 
     tweet_indices[i] <- a
   }
   
-  top_5 <- data.frame()
+  top_n <- data.frame()
   for (i in 1:length(tweet_indices)) {
-    top_5 <- rbind(top_5,data.frame(data[unlist(tweet_indices[i]),], cluster=i))
+    top_n <- rbind(top_n,data.frame(data[unlist(tweet_indices[i]),], cluster=i))
   }
-  return(top_5)
+  return(top_n)
+}
+
+#' Transforms selected continuous variable into categorical and plots barchart
+#' stratified according to clusters
+#'
+#' @param col1 counting column of desired continuous variable to convert
+#' @param col2 clustering column
+#' @return ggplot object of barchart
+quantile_plot <- function(col1, col2) {
+  count_col <- col1
+  cluster <- col2
+  data <- data.frame(count_col, cluster)
+  xs <- ceiling(quantile(count_col,c(1/4,1/2,3/4,1)))
+  data <- data %>% mutate(name=cut(count_col, 
+                                   breaks=c(-1,xs,Inf), labels=c("none",paste0(xs, ""))))
+  count(data, cluster, name) %>% ggplot( aes(fill=name, y=n, x=cluster)) + 
+    geom_bar(position="stack", stat="identity")+theme_minimal()
 }
 
 
