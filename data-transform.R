@@ -20,7 +20,7 @@ process_tweets <- function(topic, tweets, number_of_tweets) {
   my_stop_words <- stop_words %>% select(-lexicon) %>%
     bind_rows(exclude)
   
-  
+  # get user information
   followers <- c()
   user_created <- c()
   location <- c()
