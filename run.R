@@ -9,9 +9,11 @@ data <- scrape_tweets(word, n, live=FALSE)
 tweets <- as.data.frame(data[1])
 df <- as.data.frame(data[2])
 common_words <- as.data.frame(data[3])
+View(df)
+View(tweets)
+View(common_words)
 
 # ======================= KMEANS =========================
-
 # testing out different number of clusters
 k2 <- kmeans(df,2,nstart=25)
 k3 <- kmeans(df,3,nstart=25)
@@ -33,7 +35,7 @@ k3
 
 # add cluster group number variable
 tweets$cluster <- k3$cluster
-p2
+
 
 # plot of 10 most common words
 p5 <- ggplot(common_words, aes(x = reorder(word, n, function(n) -n), y=n)) + 
@@ -60,5 +62,8 @@ grid.arrange(p7, p8, p9,p6, nrow = 2)
 
 # compare 
 top_5 <- top_n_tweets(tweets,k3,5)
-top_5_tweets() %>% group_by(cluster) %>% select(screenName, followers, total_tweets, location, score)
+top_5 %>% group_by(cluster) %>% select(screenName, followers, total_tweets, location, score)
+
+
+
 
