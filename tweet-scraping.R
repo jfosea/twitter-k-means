@@ -1,15 +1,17 @@
 #' Scrapes tweets from Twitter
 #'
-#' @param topic string of topic to search for.
+#' @param topic character of topic to search for.
 #' @param number_of_tweets int number of tweets to scrape.
+#' @param since character if not NULL, restricts tweets to those since the given date. Date is to be formatted as YYYY-MM-DD
+#' @param until character If not NULL, restricts tweets to those up until the given date. Date is to be formatted as YYYY-MM-DD
 #' @param live boolean value that if TRUE, live scrape of tweets is to be returned
 #' or if FALSE, premade tweets are returned
 #' @return dataframe of tweets
-scrape_tweets <- function(topic, number_of_tweets, live=FALSE) {
+scrape_tweets <- function(topic, number_of_tweets, since, until, live=FALSE) {
   if (live) {
     authenticate()
     # scrape from Twitter
-    tweets_raw <- searchTwitter(topic,n=number_of_tweets,lang="en")
+    tweets_raw <- searchTwitter(topic,n=number_of_tweets, since=since, until=until, lang="en")
     df_raw <- twListToDF(tweets_raw)
     # In case fewer tweets are returned than requested, update the
     # number_of_tweets for processing later on.

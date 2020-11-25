@@ -4,13 +4,30 @@ source("data-transform.R")
 
 # ======================= INPUT =========================
 
-word <- "biden"
-n <- 50
-data <- scrape_tweets(word, n, live=TRUE)
+# [character] The topic word to search tweets by.
+word <- "potato"
+
+# [integer] The maximum number of tweets to scrape. May scrape fewer if not enough tweets match the topic.
+n <- 100
+
+# [character] If not NULL, restricts tweets to those since the given date.
+# Date is to be formatted as YYYY-MM-DD
+since <- "2020-11-24"
+
+# [character] If not NULL, restricts tweets to those up until the given date.
+# Date is to be formatted as YYYY-MM-DD
+until <- "2020-11-25"
+
+# [boolean] If TRUE, will scrape tweets live from the twit$ter. If FALSE, will retrieve tweet data from tweets_raw.csv
+live <- TRUE
+
+# ====================== SCRAPING ========================
+data <- scrape_tweets(word, n, since, until, live)
 tweets <- as.data.frame(data[1])
 df <- as.data.frame(data[2])
 common_words <- as.data.frame(data[3])
 number_of_tweets <- as.integer(data[4])
+print(paste("tweets scraped:", number_of_tweets))
 
 # ======================= KMEANS =========================
 # testing out different number of clusters
@@ -26,7 +43,7 @@ p3 <- fviz_cluster(k4, geom = "point",  data = df) + ggtitle("k = 4")
 p4 <- fviz_cluster(k5, geom = "point",  data = df) + ggtitle("k = 5")
 grid.arrange(p1, p2, p3, p4, nrow = 2)
 
-# ======================= ANALYSIS =========================
+# ======================= ANALYSIS =======================
 
 # some basic clustering statistics
 k3
