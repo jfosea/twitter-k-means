@@ -6,6 +6,9 @@
 
 - <https://www.r-project.org/>
 
+### R Studio
+- <https://rstudio.com/products/rstudio/download/>
+
 ### Twitter Credentials
 
 - Place `credentials.csv` at the root directory of the repository.
