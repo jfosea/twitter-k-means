@@ -18,7 +18,7 @@ since <- "2020-11-24"
 # Date is to be formatted as YYYY-MM-DD
 until <- "2020-11-25"
 
-# [boolean] If TRUE, will scrape tweets live from the twit$ter. If FALSE, will retrieve tweet data from tweets_raw.csv
+# [boolean] If TRUE, will scrape tweets live from the twitter. If FALSE, will retrieve tweet data from tweets_raw.csv
 live <- TRUE
 
 # ====================== SCRAPING ========================
