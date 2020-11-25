@@ -26,10 +26,8 @@ process_tweets <- function(topic, tweets, number_of_tweets) {
   total_tweets <- c()
   location <- c()
   tweet_length <- rep(0, number_of_tweets)
-
-  user_dictionary <- hash()
   for (i in 1:number_of_tweets) {
-    user <- get_user(tweets$screenName[i], user_dictionary)
+    user <- getUser(tweets$screenName[i])
     followers <- append(followers, user$followersCount)
     location <- append(location, user$location)
     total_tweets <- append(total_tweets, user$statusesCount)
@@ -39,7 +37,7 @@ process_tweets <- function(topic, tweets, number_of_tweets) {
   tweets$followers <- followers
   tweets$location <- location
   tweets$total_tweets <- total_tweets
-  
+
   # add tweet_length as a new column to analyze
   tweets$tweet_length <- tweet_length
 
@@ -60,7 +58,6 @@ process_tweets <- function(topic, tweets, number_of_tweets) {
     }
   }
 
-  # select only the numerical variable
   tweets$score <- score
 
   # create a copy of the tweets with numerical values only in order to be used for k-means clustering.
@@ -70,7 +67,6 @@ process_tweets <- function(topic, tweets, number_of_tweets) {
   # transform different categorical values into numerics
   tweets_num$isRetweet <- as.numeric(tweets$isRetweet)
   tweets_num$created <- as.numeric(tweets$created)
-
 
   # scale and return dataframe
   return(list(tweets, scale(tweets_num), common_words))
@@ -115,20 +111,4 @@ quantile_plot <- function(col1, col2) {
                                    breaks=c(-1,xs,Inf), labels=c("none",paste0(xs, ""))))
   count(data, cluster, name) %>% ggplot( aes(fill=name, y=n, x=cluster)) +
     geom_bar(position="stack", stat="identity")+theme_minimal()
-}
-
-
-#' Get the user object corresponding to the given user_name.
-#'
-#' @param user_name string of the username to get the user object of.
-#' @param user_dictionary has<string, user> dictionary of usernames and corresponding user objects for users already found. This exists to reduce the number of API calls to retrieve users.
-#' @returns the user object corresponding to the given user_name.
-get_user <- function(user_name, user_dictionary) {
-  if (!has.key(user_name, user_dictionary)) {
-    user <- getUser(user_name)
-    user_dictionary[user_name] <- user
-  } else {
-    user <- user_dictionary[user_name]
-  }
-  return(user)
 }
