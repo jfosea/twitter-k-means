@@ -121,11 +121,9 @@ quantile_plot <- function(col1, col2) {
 #' Get the user object corresponding to the given user_name.
 #'
 #' @param user_name string of the username to get the user object of.
-#' @param user_dictionary has<string, user> diciontary of usernames and corresponding user objects for users already found. This exists to reduce the number of API calls to retrieve users.
+#' @param user_dictionary has<string, user> dictionary of usernames and corresponding user objects for users already found. This exists to reduce the number of API calls to retrieve users.
 #' @returns the user object corresponding to the given user_name.
 get_user <- function(user_name, user_dictionary) {
-  #return(getUser(user_name))
-
   if (!has.key(user_name, user_dictionary)) {
     user <- getUser(user_name)
     user_dictionary[user_name] <- user
