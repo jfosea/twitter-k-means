@@ -101,7 +101,7 @@ quantile_plot <- function(col1, col2) {
   count_col <- col1
   cluster <- col2
   data <- data.frame(count_col, cluster)
-  xs <- ceiling(quantile(count_col,c(1/4,1/2,3/4,1)))
+  xs <- unique(ceiling(quantile(count_col,c(1/4,1/2,3/4,1))))
   data <- data %>% mutate(name=cut(count_col, 
                                    breaks=c(-1,xs,Inf), labels=c("none",paste0(xs, ""))))
   count(data, cluster, name) %>% ggplot( aes(fill=name, y=n, x=cluster)) + 
