@@ -3,12 +3,31 @@ source("data-transform.R")
 
 
 # ======================= INPUT =========================
-word <- "biden"
+
+# [character] The topic word to search tweets by.
+word <- "potato"
+
+# [integer] The maximum number of tweets to scrape. May scrape fewer if not enough tweets match the topic.
 n <- 100
-data <- scrape_tweets(word, n, live=FALSE)
+
+# [character] If not NULL, restricts tweets to those since the given date.
+# Date is to be formatted as YYYY-MM-DD
+since <- "2020-11-24"
+
+# [character] If not NULL, restricts tweets to those up until the given date.
+# Date is to be formatted as YYYY-MM-DD
+until <- "2020-11-25"
+
+# [boolean] If TRUE, will scrape tweets live from the twit$ter. If FALSE, will retrieve tweet data from tweets_raw.csv
+live <- TRUE
+
+# ====================== SCRAPING ========================
+data <- scrape_tweets(word, n, since, until, live)
 tweets <- as.data.frame(data[1])
 df <- as.data.frame(data[2])
 common_words <- as.data.frame(data[3])
+number_of_tweets <- as.integer(data[4])
+print(paste("tweets scraped:", number_of_tweets))
 
 # ======================= KMEANS =========================
 # testing out different number of clusters
@@ -24,7 +43,7 @@ p3 <- fviz_cluster(k4, geom = "point",  data = df) + ggtitle("k = 4")
 p4 <- fviz_cluster(k5, geom = "point",  data = df) + ggtitle("k = 5")
 grid.arrange(p1, p2, p3, p4, nrow = 2)
 
-# ======================= ANALYSIS =========================
+# ======================= ANALYSIS =======================
 
 # some basic clustering statistics
 k3
@@ -35,14 +54,14 @@ tweets$cluster <- k3$cluster
 
 
 # plot of 10 most common words
-p5 <- ggplot(common_words, aes(x = reorder(word, n, function(n) -n), y=n)) + 
+p5 <- ggplot(common_words, aes(x = reorder(word, n, function(n) -n), y=n)) +
   geom_bar(stat="identity", fill="lightblue")+ theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
   xlab("") + ggtitle("Top 10 Most Common Words")
 p5
 
 # compare scores in each cluster
-p6 <- count(tweets, cluster, score) %>% ggplot( aes(fill=score, y=n, x=cluster)) + 
-  geom_bar(position="stack", stat="identity")+theme_minimal() + 
+p6 <- count(tweets, cluster, score) %>% ggplot( aes(fill=score, y=n, x=cluster)) +
+  geom_bar(position="stack", stat="identity")+theme_minimal() +
   ggtitle("Score Distribution Grouped by Clusters")
 p6
 
@@ -55,9 +74,14 @@ p8
 # compare total tweets count in each cluster
 p9 <- quantile_plot(tweets$total_tweets, tweets$cluster) + ggtitle("Total Tweets Count")
 p9
-grid.arrange(p7, p8, p9, nrow = 2)
+# compare tweet length in each cluster
+p10 <- quantile_plot(tweets$tweet_length, tweets$cluster) + ggtitle("Tweet Length")
+p10
 
-# compare 
+
+grid.arrange(p6, p7, p8, p9, p10, nrow = 2)
+
+# compare
 top_5 <- top_n_tweets(tweets,k3,5)
 top_5 %>% group_by(cluster) %>% select(screenName, followers, total_tweets, location, score)
 

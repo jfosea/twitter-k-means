@@ -1,31 +1,35 @@
 #' Scrapes tweets from Twitter
 #'
-#' @param topic string of topic to search for.
+#' @param topic character of topic to search for.
 #' @param number_of_tweets int number of tweets to scrape.
+#' @param since character if not NULL, restricts tweets to those since the given date. Date is to be formatted as YYYY-MM-DD
+#' @param until character If not NULL, restricts tweets to those up until the given date. Date is to be formatted as YYYY-MM-DD
 #' @param live boolean value that if TRUE, live scrape of tweets is to be returned
 #' or if FALSE, premade tweets are returned
 #' @return dataframe of tweets
-scrape_tweets <- function(topic, number_of_tweets, live=FALSE) {
-  if (live==FALSE) {
-    # read from saved .csv files
-    tweets <- read.csv("datasets/tweets.csv")
-    df <- read.csv("datasets/scaled_tweets.csv")
-    common_words <- read.csv("datasets/common_words.csv")
-    return(list(tweets, df, common_words))
-  }
-  if (live==TRUE) {
+scrape_tweets <- function(topic, number_of_tweets, since, until, live=FALSE) {
+  if (live) {
     authenticate()
     # scrape from Twitter
-    fn_twitter <- searchTwitter(topic,n=number_of_tweets,lang="en")
-    df_raw <- twListToDF(fn_twitter) 
-    # Clean and prepare analytical dataset
-    processed_data <- process_tweets(topic, df_raw, number_of_tweet)
-    # Separate results
-    tweets <- as.data.frame(processed_data[1])
-    df <- as.data.frame(processed_data[2])
-    common_words <- as.data.frame(processed_data[3])
-    return(list(tweets, df, common_words))
+    tweets_raw <- searchTwitter(topic,n=number_of_tweets, since=since, until=until, lang="en")
+    df_raw <- twListToDF(tweets_raw)
+    # In case fewer tweets are returned than requested, update the
+    # number_of_tweets for processing later on.
+    number_of_tweets <- NROW(df_raw)
+
+  } else {
+    # read from saved .csv files
+    df_raw <- read.csv("datasets/tweets_raw.csv")
   }
+
+  # Clean and prepare analytical dataset
+  processed_data <- process_tweets(topic, df_raw, number_of_tweets)
+  # Separate results
+  tweets <- as.data.frame(processed_data[1])
+  df <- as.data.frame(processed_data[2])
+  common_words <- as.data.frame(processed_data[3])
+
+  return(list(tweets, df, common_words, number_of_tweets))
 }
 
 #' Connects to Twitter API

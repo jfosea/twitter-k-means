@@ -5,7 +5,7 @@
 #' @param number_of_tweets int number of tweets to scrape.
 #' @return dataframe of cleaned and scaled tweets
 process_tweets <- function(topic, tweets, number_of_tweets) {
-  
+
   exclude <- data.frame(word = c(topic,
                                  paste0(topic, c("'s" , "'s", "s")),
                                  "https",
@@ -14,36 +14,40 @@ process_tweets <- function(topic, tweets, number_of_tweets) {
                                  "amp",
                                  "it's",
                                  paste0(1:100)))
-  
-  
+
+
   # Create list of unwanted words
   my_stop_words <- stop_words %>% select(-lexicon) %>%
     bind_rows(exclude)
-  
+
   # get user information
   followers <- c()
   user_created <- c()
   total_tweets <- c()
   location <- c()
-  user_dictionary <- hash()
+  tweet_length <- rep(0, number_of_tweets)
   for (i in 1:number_of_tweets) {
-    user <- get_user(tweets$screenName[i], user_dictionary)
+    user <- getUser(tweets$screenName[i])
     followers <- append(followers, user$followersCount)
     location <- append(location, user$location)
     total_tweets <- append(total_tweets, user$statusesCount)
+    tweet_length[i] <- nchar(tweets$text[i])
   }
-  
+
   tweets$followers <- followers
   tweets$location <- location
   tweets$total_tweets <- total_tweets
-  
+
+  # add tweet_length as a new column to analyze
+  tweets$tweet_length <- tweet_length
+
   # Separate each tweet by word
   tweet_words <- tweets %>% select(id,text) %>% unnest_tokens(word,text)
-  
+
   # Filter out stop words
   tweet_words_clean <- tweet_words %>% anti_join(my_stop_words)
   common_words <- tweet_words_clean %>% count(word, sort=TRUE) %>% head(10)
-  
+
   # adding score column if tweet contains common words
   score <- rep(0, number_of_tweets)
   for (i in 1:nrow(common_words)) {
@@ -53,16 +57,17 @@ process_tweets <- function(topic, tweets, number_of_tweets) {
       score[n] <- sum(score[n], 1)
     }
   }
-  
-  # select only the numerical variable
+
   tweets$score <- score
-  tweets_num <- select(tweets, total_tweets, followers, retweetCount, score)
-  
+
+  # create a copy of the tweets with numerical values only in order to be used for k-means clustering.
+  # Select features that are relevant for analysis; discard the rest.
+  tweets_num <- select(tweets, total_tweets, followers, retweetCount, tweet_length, score)
+
   # transform different categorical values into numerics
   tweets_num$isRetweet <- as.numeric(tweets$isRetweet)
   tweets_num$created <- as.numeric(tweets$created)
-  
-  
+
   # scale and return dataframe
   return(list(tweets, scale(tweets_num), common_words))
 
@@ -80,10 +85,10 @@ top_n_tweets <- function(data, x, n) {
     ind <- which(x$cluster==i)
     distances <- rowSums(df[ind,] - x$centers[i,])^2
     distdata <- data.frame(ind, distances)
-    a <- distdata %>% arrange(distances) %>% head(n)%>% select(ind) 
+    a <- distdata %>% arrange(distances) %>% head(n)%>% select(ind)
     tweet_indices[i] <- a
   }
-  
+
   top_n <- data.frame()
   for (i in 1:length(tweet_indices)) {
     top_n <- rbind(top_n,data.frame(data[unlist(tweet_indices[i]),], cluster=i))
@@ -101,27 +106,9 @@ quantile_plot <- function(col1, col2) {
   count_col <- col1
   cluster <- col2
   data <- data.frame(count_col, cluster)
-  xs <- ceiling(quantile(count_col,c(1/4,1/2,3/4,1)))
-  data <- data %>% mutate(name=cut(count_col, 
+  xs <- unique(ceiling(quantile(count_col,c(1/4,1/2,3/4,1))))
+  data <- data %>% mutate(name=cut(count_col,
                                    breaks=c(-1,xs,Inf), labels=c("none",paste0(xs, ""))))
-  count(data, cluster, name) %>% ggplot( aes(fill=name, y=n, x=cluster)) + 
+  count(data, cluster, name) %>% ggplot( aes(fill=name, y=n, x=cluster)) +
     geom_bar(position="stack", stat="identity")+theme_minimal()
-}
-
-
-#' Get the user object corresponding to the given user_name.
-#' 
-#' @param user_name string of the username to get the user object of.
-#' @param user_dictionary has<string, user> diciontary of usernames and corresponding user objects for users already found. This exists to reduce the number of API calls to retrieve users.
-#' @returns the user object corresponding to the given user_name.
-get_user <- function(user_name, user_dictionary) {
-  #return(getUser(user_name))
-  
-  if (!has.key(user_name, user_dictionary)) {
-    user <- getUser(user_name)
-    user_dictionary[user_name] <- user
-  } else {
-    user <- user_dictionary[user_name]
-  }
-  return(user)
 }
