@@ -10,6 +10,7 @@ data <- scrape_tweets(word, n, live=TRUE)
 tweets <- as.data.frame(data[1])
 df <- as.data.frame(data[2])
 common_words <- as.data.frame(data[3])
+number_of_tweets <- as.integer(data[4])
 
 # ======================= KMEANS =========================
 # testing out different number of clusters
