@@ -9,22 +9,25 @@ scrape_tweets <- function(topic, number_of_tweets, live=FALSE) {
   if (live) {
     authenticate()
     # scrape from Twitter
-    fn_twitter <- searchTwitter(topic,n=number_of_tweets,lang="en")
-    df_raw <- twListToDF(fn_twitter)
-    # Clean and prepare analytical dataset
-    processed_data <- process_tweets(topic, df_raw, number_of_tweets)
-    # Separate results
-    tweets <- as.data.frame(processed_data[1])
-    df <- as.data.frame(processed_data[2])
-    common_words <- as.data.frame(processed_data[3])
+    tweets_raw <- searchTwitter(topic,n=number_of_tweets,lang="en")
+    df_raw <- twListToDF(tweets_raw)
+    # In case fewer tweets are returned than requested, update the
+    # number_of_tweets for processing later on.
+    number_of_tweets <- NROW(df_raw)
+
   } else {
     # read from saved .csv files
-    tweets <- read.csv("datasets/tweets.csv")
-    df <- read.csv("datasets/scaled_tweets.csv")
-    common_words <- read.csv("datasets/common_words.csv")
+    df_raw <- read.csv("datasets/tweets_raw.csv")
   }
 
-  return(list(tweets, df, common_words))
+  # Clean and prepare analytical dataset
+  processed_data <- process_tweets(topic, df_raw, number_of_tweets)
+  # Separate results
+  tweets <- as.data.frame(processed_data[1])
+  df <- as.data.frame(processed_data[2])
+  common_words <- as.data.frame(processed_data[3])
+
+  return(list(tweets, df, common_words, number_of_tweets))
 }
 
 #' Connects to Twitter API
