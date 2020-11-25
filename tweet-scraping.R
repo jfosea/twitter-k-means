@@ -12,7 +12,7 @@ scrape_tweets <- function(topic, number_of_tweets, live=FALSE) {
     fn_twitter <- searchTwitter(topic,n=number_of_tweets,lang="en")
     df_raw <- twListToDF(fn_twitter)
     # Clean and prepare analytical dataset
-    processed_data <- process_tweets(topic, df_raw, number_of_tweet)
+    processed_data <- process_tweets(topic, df_raw, number_of_tweets)
     # Separate results
     tweets <- as.data.frame(processed_data[1])
     df <- as.data.frame(processed_data[2])
