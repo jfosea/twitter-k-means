@@ -84,9 +84,12 @@ p9
 # compare tweet length in each cluster
 p10 <- quantile_plot(tweets$tweet_length, tweets$cluster) + ggtitle("Tweet Length")
 p10
+# compare like count in each cluster
+p11 <- quantile_plot(tweets$favoriteCount, tweets$cluster) + ggtitle("Likes Count")
+p11
 
 
-grid.arrange(p6, p_hashtags, p7, p8, p9, p10, nrow = 2)
+grid.arrange(p6, p_hashtags, p7, p8, p9, p10, p11, nrow = 3)
 
 # compare
 top_5 <- top_n_tweets(tweets,k3,5)
