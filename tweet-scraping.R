@@ -28,8 +28,9 @@ scrape_tweets <- function(topic, number_of_tweets, since, until, live=FALSE) {
   tweets <- as.data.frame(processed_data[1])
   df <- as.data.frame(processed_data[2])
   common_words <- as.data.frame(processed_data[3])
+  hashtags <- as.data.frame(processed_data[4])
 
-  return(list(tweets, df, common_words, number_of_tweets))
+  return(list(tweets, df, common_words, hashtags, number_of_tweets))
 }
 
 #' Connects to Twitter API

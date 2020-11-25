@@ -47,6 +47,8 @@ process_tweets <- function(topic, tweets, number_of_tweets) {
   # Filter out stop words
   tweet_words_clean <- tweet_words %>% anti_join(my_stop_words)
   common_words <- tweet_words_clean %>% count(word, sort=TRUE) %>% head(10)
+  
+  hashtags <- tweet_words_clean %>% filter(substr(word,1,1) == "#") %>% count(word, sort=TRUE)
 
   # adding score column if tweet contains common words
   score <- rep(0, number_of_tweets)
@@ -69,7 +71,7 @@ process_tweets <- function(topic, tweets, number_of_tweets) {
   tweets_num$created <- as.numeric(tweets$created)
 
   # scale and return dataframe
-  return(list(tweets, scale(tweets_num), common_words))
+  return(list(tweets, scale(tweets_num), common_words, hashtags))
 
 }
 

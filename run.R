@@ -5,7 +5,7 @@ source("data-transform.R")
 # ======================= INPUT =========================
 
 # [character] The topic word to search tweets by.
-word <- "potato"
+word <- "biden"
 
 # [integer] The maximum number of tweets to scrape. May scrape fewer if not enough tweets match the topic.
 n <- 100
@@ -26,7 +26,8 @@ data <- scrape_tweets(word, n, since, until, live)
 tweets <- as.data.frame(data[1])
 df <- as.data.frame(data[2])
 common_words <- as.data.frame(data[3])
-number_of_tweets <- as.integer(data[4])
+hashtags <- as.data.frame(data[4])
+number_of_tweets <- as.integer(data[5])
 print(paste("tweets scraped:", number_of_tweets))
 
 # ======================= KMEANS =========================
@@ -59,6 +60,12 @@ p5 <- ggplot(common_words, aes(x = reorder(word, n, function(n) -n), y=n)) +
   xlab("") + ggtitle("Top 10 Most Common Words")
 p5
 
+# plot hashtags
+p_hashtags <- ggplot(hashtags, aes(x = reorder(word, n, function(n) -n), y=n)) +
+  geom_bar(stat="identity", fill="lightblue")+ theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+  xlab("") + ggtitle("Hashtags")
+p_hashtags
+
 # compare scores in each cluster
 p6 <- count(tweets, cluster, score) %>% ggplot( aes(fill=score, y=n, x=cluster)) +
   geom_bar(position="stack", stat="identity")+theme_minimal() +
@@ -79,7 +86,7 @@ p10 <- quantile_plot(tweets$tweet_length, tweets$cluster) + ggtitle("Tweet Lengt
 p10
 
 
-grid.arrange(p6, p7, p8, p9, p10, nrow = 2)
+grid.arrange(p6, p_hashtags, p7, p8, p9, p10, nrow = 2)
 
 # compare
 top_5 <- top_n_tweets(tweets,k3,5)
