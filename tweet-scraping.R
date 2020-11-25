@@ -12,15 +12,20 @@ scrape_tweets <- function(topic, number_of_tweets, since, until, live=FALSE) {
     authenticate()
     # scrape from Twitter
     tweets_raw <- searchTwitter(topic,n=number_of_tweets, since=since, until=until, lang="en")
-    df_raw <- twListToDF(tweets_raw)
+    df_raw <- tweets_raw %>% twListToDF() %>% select(-id)
+    write.csv(df_raw, "datasets/tweets_raw.csv")
+    
     # In case fewer tweets are returned than requested, update the
     # number_of_tweets for processing later on.
     number_of_tweets <- NROW(df_raw)
 
   } else {
     # read from saved .csv files
-    df_raw <- read.csv("datasets/tweets_raw.csv")
+    df_raw <- read.csv("datasets/tweets_raw.csv", colClasses = c("created"="character")) %>% select(-X)
   }
+  
+  df_raw <- cbind(seq(1, NROW(df_raw)), df_raw)
+  names(df_raw)[1] <- "id"
 
   # Clean and prepare analytical dataset
   processed_data <- process_tweets(topic, df_raw, number_of_tweets)
