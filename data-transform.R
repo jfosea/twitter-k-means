@@ -29,6 +29,9 @@ process_tweets <- function(topic, tweets, number_of_tweets, common_word_count) {
   tweet_length <- rep(0, number_of_tweets)
   for (i in 1:number_of_tweets) {
     user <- getUser(tweets$screenName[i])
+    print(paste("user returned?", ifelse(is.null(user), "NO", "YES")))
+    print(paste("user:", tweets$screenName[i]))
+    print(paste("\tfollowers:", user$followersCount))
     followers <- append(followers, user$followersCount)
     location <- append(location, user$location)
     total_tweets <- append(total_tweets, user$statusesCount)
@@ -117,7 +120,7 @@ quantile_plot <- function(col1, col2) {
   data <- data.frame(count_col, cluster)
   xs <- unique(ceiling(quantile(count_col,c(1/4,1/2,3/4,1))))
 
-  print(length(xs))
+  print(paste("quantile length:", length(xs)))
 
   if (length(xs)==2) {
     xs <- unique(ceiling(quantile(count_col,c(1/2,1))))
@@ -150,6 +153,7 @@ quantile_plot <- function(col1, col2) {
       geom_bar(position="stack", stat="identity")+theme_minimal()
   }
 
-  print(xs)
+  print(paste("quantile breaks:", xs))
+
   return(p)
 }
