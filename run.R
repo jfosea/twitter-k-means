@@ -56,7 +56,6 @@ k3
 # add cluster group number variable
 tweets$cluster <- k3$cluster
 
-
 # plot of 10 most common words
 p5 <- ggplot(common_words, aes(x = reorder(word, n, function(n) -n), y=n)) +
   geom_bar(stat="identity", fill="lightblue")+ theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
@@ -66,7 +65,7 @@ p5
 # plot hashtags
 p_hashtags <- ggplot(hashtags, aes(x = reorder(word, n, function(n) -n), y=n)) +
   geom_bar(stat="identity", fill="lightblue")+ theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
-  xlab("") + ggtitle("Hashtags")
+  xlab("") + ggtitle("Most Common Hashtags")
 p_hashtags
 
 # compare scores in each cluster
@@ -97,7 +96,3 @@ grid.arrange(p6, p_hashtags, p7, p8, p9, p10, p11, nrow = 3)
 # compare
 top_5 <- top_n_tweets(tweets,k3,5)
 top_5 %>% group_by(cluster) %>% select(screenName, followers, total_tweets, location, score)
-
-
-
-
