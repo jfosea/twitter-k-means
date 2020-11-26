@@ -23,14 +23,13 @@ In order to connect to the Twitter API to scrape live twitter data:
 
 1. Open the project, by clicking on `twitter-k-means.Rproj`.
 
-![Open project](images/1-open-project.png)
+    ![Open project](images/1-open-project.png)
 
 2. Run `setup.R`.
 
     - This will install and load all prerequisite libraries needed.
 
-
-![Setup](images/2-setup.png)
+    ![Setup](images/2-setup.png)
 
 3. Set the input values for `run.R` at the top of the file.
 
@@ -47,11 +46,11 @@ In order to connect to the Twitter API to scrape live twitter data:
     - live
         - If TRUE, will scrape tweets live from the twitter. If FALSE, will retrieve tweet data from tweets_raw.csv.
 
-![Input](images/3-input.png)
+    ![Input](images/3-input.png)
 
 4. Run `run.R` and observe results.
 
-![Run](images/4-run.png)
+    ![Run](images/4-run.png)
 
 ## Visual Output
 
