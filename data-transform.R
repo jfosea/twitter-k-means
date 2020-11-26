@@ -3,8 +3,9 @@
 #' @param topic string of topic to search for.
 #' @param tweets data.frame that contains the raw tweets scraped using twitteR
 #' @param number_of_tweets int number of tweets to scrape.
+#' @param common_word_count int The number of most common words to retrieve
 #' @return dataframe of cleaned and scaled tweets
-process_tweets <- function(topic, tweets, number_of_tweets) {
+process_tweets <- function(topic, tweets, number_of_tweets, common_word_count) {
 
   exclude <- data.frame(word = c(topic,
                                  paste0(topic, c("'s" , "'s", "s")),
@@ -46,7 +47,7 @@ process_tweets <- function(topic, tweets, number_of_tweets) {
 
   # Filter out stop words
   tweet_words_clean <- tweet_words %>% anti_join(my_stop_words)
-  common_words <- tweet_words_clean %>% count(word, sort=TRUE) %>% head(10)
+  common_words <- tweet_words_clean %>% count(word, sort=TRUE) %>% head(common_word_count)
   
   
   # Count top 10 most frequent hashtags
@@ -72,7 +73,7 @@ process_tweets <- function(topic, tweets, number_of_tweets) {
 
   # create a copy of the tweets with numerical values only in order to be used for k-means clustering.
   # Select features that are relevant for analysis; discard the rest.
-  tweets_num <- select(tweets, total_tweets, followers, retweetCount, tweet_length, score)
+  tweets_num <- select(tweets, total_tweets, followers, retweetCount, favoriteCount, tweet_length, score)
 
   # transform different categorical values into numerics
   tweets_num$isRetweet <- as.numeric(tweets$isRetweet)

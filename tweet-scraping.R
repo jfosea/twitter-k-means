@@ -2,13 +2,18 @@
 #'
 #' @param topic character of topic to search for.
 #' @param number_of_tweets int number of tweets to scrape.
+#' @param common_word_count int The number of most common words to retrieve
 #' @param since character if not NULL, restricts tweets to those since the given date. Date is to be formatted as YYYY-MM-DD
 #' @param until character If not NULL, restricts tweets to those up until the given date. Date is to be formatted as YYYY-MM-DD
 #' @param live boolean value that if TRUE, live scrape of tweets is to be returned
 #' or if FALSE, premade tweets are returned
 #' @return dataframe of tweets
+<<<<<<< HEAD
 scrape_tweets <- function(topic, number_of_tweets, since, until, live=FALSE) {
   authenticate()
+=======
+scrape_tweets <- function(topic, number_of_tweets, common_word_count, since, until, live=FALSE) {
+>>>>>>> 597cd09a1eafb2c398330736d64d733a6c92266b
   if (live) {
     # scrape from Twitter
     tweets_raw <- searchTwitter(topic,n=number_of_tweets, since=since, until=until, lang="en")
@@ -28,7 +33,7 @@ scrape_tweets <- function(topic, number_of_tweets, since, until, live=FALSE) {
   names(df_raw)[1] <- "id"
   
   # Clean and prepare analytical dataset
-  processed_data <- process_tweets(topic, df_raw, number_of_tweets)
+  processed_data <- process_tweets(topic, df_raw, number_of_tweets, common_word_count)
   # Separate results
   tweets <- as.data.frame(processed_data[1])
   df <- as.data.frame(processed_data[2])
