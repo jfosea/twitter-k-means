@@ -122,7 +122,7 @@ quantile_plot <- function(col1, col2) {
   if (length(xs)==2) {
     xs <- unique(ceiling(quantile(count_col,c(1/2,1))))
     label1 <- ifelse(xs[1] == 0, 0, paste("0 -", xs[1]))
-    label2 <- ifelse(xs[1] + 1 == xs[2], x[2], paste(xs[1] + 1,"-", xs[2]))
+    label2 <- ifelse(xs[1] + 1 == xs[2], xs[2], paste(xs[1] + 1,"-", xs[2]))
 
     data <- data %>% mutate(name=cut(count_col,
                                      breaks=c(-1,xs,Inf), labels=c(label1, label2, "")))
@@ -131,8 +131,8 @@ quantile_plot <- function(col1, col2) {
   } else if (length(xs)==3) {
     xs <- unique(ceiling(quantile(count_col,c(1/3,2/3,1))))
     label1 <- ifelse(xs[1] == 0, 0, paste("0 -", xs[1]))
-    label2 <- ifelse(xs[1] + 1 == xs[2], x[2], paste(xs[1] + 1,"-", xs[2]))
-    label3 <- ifelse(xs[2] + 1 == xs[3], x[4], paste(xs[2] + 1,"-", xs[3]))
+    label2 <- ifelse(xs[1] + 1 == xs[2], xs[2], paste(xs[1] + 1,"-", xs[2]))
+    label3 <- ifelse(xs[2] + 1 == xs[3], xs[4], paste(xs[2] + 1,"-", xs[3]))
 
     data <- data %>% mutate(name=cut(count_col,
                                      breaks=c(-1,xs,Inf), labels=c(label1, label2, label3, "")))
@@ -140,9 +140,9 @@ quantile_plot <- function(col1, col2) {
       geom_bar(position="stack", stat="identity")+theme_minimal()
   } else {
     label1 <- ifelse(xs[1] == 0, 0, paste("0 -", xs[1]))
-    label2 <- ifelse(xs[1] + 1 == xs[2], x[2], paste(xs[1] + 1,"-", xs[2]))
-    label3 <- ifelse(xs[2] + 1 == xs[3], x[4], paste(xs[2] + 1,"-", xs[3]))
-    label4 <- ifelse(xs[3] + 1 == xs[4], x[4], paste(xs[3] + 1,"-", xs[4]))
+    label2 <- ifelse(xs[1] + 1 == xs[2], xs[2], paste(xs[1] + 1,"-", xs[2]))
+    label3 <- ifelse(xs[2] + 1 == xs[3], xs[4], paste(xs[2] + 1,"-", xs[3]))
+    label4 <- ifelse(xs[3] + 1 == xs[4], xs[4], paste(xs[3] + 1,"-", xs[4]))
 
     data <- data %>% mutate(name=cut(count_col,
                                      breaks=c(-1,xs,Inf), labels=c(label1, label2, label3, label4, "")))
