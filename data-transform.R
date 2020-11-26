@@ -3,8 +3,9 @@
 #' @param topic string of topic to search for.
 #' @param tweets data.frame that contains the raw tweets scraped using twitteR
 #' @param number_of_tweets int number of tweets to scrape.
+#' @param common_word_count int The number of most common words to retrieve
 #' @return dataframe of cleaned and scaled tweets
-process_tweets <- function(topic, tweets, number_of_tweets) {
+process_tweets <- function(topic, tweets, number_of_tweets, common_word_count) {
 
   exclude <- data.frame(word = c(topic,
                                  paste0(topic, c("'s" , "'s", "s")),
@@ -46,7 +47,7 @@ process_tweets <- function(topic, tweets, number_of_tweets) {
 
   # Filter out stop words
   tweet_words_clean <- tweet_words %>% anti_join(my_stop_words)
-  common_words <- tweet_words_clean %>% count(word, sort=TRUE) %>% head(10)
+  common_words <- tweet_words_clean %>% count(word, sort=TRUE) %>% head(common_word_count)
   
   hashtags <- tweet_words_clean %>% filter(substr(word,1,1) == "#") %>% count(word, sort=TRUE)
 

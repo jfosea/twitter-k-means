@@ -10,6 +10,9 @@ word <- "biden"
 # [integer] The maximum number of tweets to scrape. May scrape fewer if not enough tweets match the topic.
 n <- 100
 
+# [integer] The number of most common words to retrieve
+common_word_count <- 20
+
 # [character] If not NULL, restricts tweets to those since the given date.
 # Date is to be formatted as YYYY-MM-DD
 since <- "2020-11-24"
@@ -22,7 +25,7 @@ until <- "2020-11-25"
 live <- TRUE
 
 # ====================== SCRAPING ========================
-data <- scrape_tweets(word, n, since, until, live)
+data <- scrape_tweets(word, n, common_word_count, since, until, live)
 tweets <- as.data.frame(data[1])
 df <- as.data.frame(data[2])
 common_words <- as.data.frame(data[3])
@@ -57,7 +60,7 @@ tweets$cluster <- k3$cluster
 # plot of 10 most common words
 p5 <- ggplot(common_words, aes(x = reorder(word, n, function(n) -n), y=n)) +
   geom_bar(stat="identity", fill="lightblue")+ theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
-  xlab("") + ggtitle("Top 10 Most Common Words")
+  xlab("") + ggtitle(paste("Top", common_word_count, "Most Common Words"))
 p5
 
 # plot hashtags
