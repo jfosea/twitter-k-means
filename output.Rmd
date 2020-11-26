@@ -25,8 +25,13 @@ We will use three datasets scraped from Twitter on November 22, 2020 using $n=10
     word <- "biden"
     
     # [integer] The maximum number of tweets to scrape. May scrape fewer if not enough tweets match the topic.
+<<<<<<< HEAD
     n <- 100
     
+=======
+    n <- 400
+
+>>>>>>> d95632eb08a9338113a3fb713953effbcb5d05bf
     # [integer] The number of most common words to retrieve
     common_word_count <- 20
     
@@ -92,7 +97,7 @@ grid.arrange(p1, p2, p3, p4, nrow = 2)
 
 We choose $k=3$ as our chosen number of clusters and we will now analyze.
 
-## $k=3$ Means Clustering Analysis
+## $k=2$ Means Clustering Analysis
 
 #### Variation Between, Within and Total
 
