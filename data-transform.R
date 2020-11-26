@@ -31,7 +31,7 @@ process_tweets <- function(topic, tweets, number_of_tweets, common_word_count) {
     user <- getUser(tweets$screenName[i])
     print(paste("user returned?", ifelse(is.null(user), "NO", "YES")))
     print(paste("user:", tweets$screenName[i]))
-    print(paste("\tfollowers:", user$followersCount))
+    print(paste("    followers:", user$followersCount))
     followers <- append(followers, user$followersCount)
     location <- append(location, user$location)
     total_tweets <- append(total_tweets, user$statusesCount)
