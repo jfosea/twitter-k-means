@@ -9,22 +9,22 @@
 #' or if FALSE, premade tweets are returned
 #' @return dataframe of tweets
 scrape_tweets <- function(topic, number_of_tweets, common_word_count, since, until, live=FALSE) {
+  authenticate()
   if (live) {
-    authenticate()
     # scrape from Twitter
     tweets_raw <- searchTwitter(topic,n=number_of_tweets, since=since, until=until, lang="en")
     df_raw <- tweets_raw %>% twListToDF() %>% select(-id)
-    write.csv(df_raw, "datasets/tweets_raw.csv")
-    
+    write.csv(df_raw, "tweets_raw.csv")
+
     # In case fewer tweets are returned than requested, update the
     # number_of_tweets for processing later on.
     number_of_tweets <- NROW(df_raw)
 
   } else {
     # read from saved .csv files
-    df_raw <- read.csv("datasets/tweets_raw.csv", colClasses = c("created"="character")) %>% select(-X)
+    df_raw <- read.csv("tweets_raw.csv", colClasses = c("created"="factor")) %>% select(-X)
   }
-  
+
   df_raw <- cbind(seq(1, NROW(df_raw)), df_raw)
   names(df_raw)[1] <- "id"
 
@@ -36,6 +36,7 @@ scrape_tweets <- function(topic, number_of_tweets, common_word_count, since, unt
   common_words <- as.data.frame(processed_data[3])
   hashtags <- as.data.frame(processed_data[4])
 
+  print(paste("tweets scraped:", number_of_tweets))
   return(list(tweets, df, common_words, hashtags, number_of_tweets))
 }
 

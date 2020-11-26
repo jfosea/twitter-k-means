@@ -5,10 +5,10 @@ source("data-transform.R")
 # ======================= INPUT =========================
 
 # [character] The topic word to search tweets by.
-word <- "biden"
+word <- "#trump"
 
 # [integer] The maximum number of tweets to scrape. May scrape fewer if not enough tweets match the topic.
-n <- 100
+n <- 10
 
 # [integer] The number of most common words to retrieve
 common_word_count <- 20
@@ -31,7 +31,6 @@ df <- as.data.frame(data[2])
 common_words <- as.data.frame(data[3])
 hashtags <- as.data.frame(data[4])
 number_of_tweets <- as.integer(data[5])
-print(paste("tweets scraped:", number_of_tweets))
 
 # ======================= KMEANS =========================
 # testing out different number of clusters
@@ -62,11 +61,13 @@ p5 <- ggplot(common_words, aes(x = reorder(word, n, function(n) -n), y=n)) +
   xlab("") + ggtitle(paste("Top", common_word_count, "Most Common Words"))
 p5
 
+
 # plot hashtags
-p_hashtags <- ggplot(hashtags, aes(x = reorder(word, n, function(n) -n), y=n)) +
-  geom_bar(stat="identity", fill="lightblue")+ theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+p_hashtags <- ggplot(hashtags, aes(x = reorder(Hashtags, n, function(n) -n), y=n)) +
+  geom_bar(stat="identity", fill="darkblue")+ theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
   xlab("") + ggtitle("Most Common Hashtags")
 p_hashtags
+
 
 # compare scores in each cluster
 p6 <- count(tweets, cluster, score) %>% ggplot( aes(fill=score, y=n, x=cluster)) +
