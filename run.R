@@ -22,7 +22,7 @@ since <- "2020-11-24"
 until <- "2020-11-25"
 
 # [boolean] If TRUE, will scrape tweets live from the twitter. If FALSE, will retrieve tweet data from tweets_raw.csv
-live <- TRUE
+live <- FALSE
 
 # ====================== SCRAPING ========================
 data <- scrape_tweets(word, n, common_word_count, since, until, live)
@@ -67,7 +67,6 @@ p_hashtags <- ggplot(hashtags, aes(x = reorder(Hashtags, n, function(n) -n), y=n
   geom_bar(stat="identity", fill="darkblue")+ theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
   xlab("") + ggtitle("Most Common Hashtags")
 p_hashtags
-View(hashtags)
 
 # compare scores in each cluster
 p6 <- count(tweets, cluster, score) %>% ggplot( aes(fill=score, y=n, x=cluster)) +

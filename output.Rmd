@@ -39,7 +39,7 @@ since <- "2020-11-24"
 until <- "2020-11-25"
 
 # [boolean] If TRUE, will scrape tweets live from the twitter. If FALSE, will retrieve tweet data from tweets_raw.csv
-live <- TRUE
+live <- FALSE
 
 # ====================== SCRAPING ========================
 data <- scrape_tweets(word, n, common_word_count, since, until, live)
