@@ -163,7 +163,7 @@ grid.arrange(p6, p_hashtags, p7, p8, p9, p10, p11, nrow = 3)
 
 ```{r, echo=FALSE}
 top_5 <- top_n_tweets(tweets,k3,5)
-top_5 %>% group_by(cluster) %>% select(screenName, followers, total_tweets, location, score)
+top_5 %>% group_by(cluster) %>% select(screenName, followers, total_tweets, location, score) %>% kbl() %>%
 kable_styling()
 ```
 
