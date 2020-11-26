@@ -7,6 +7,7 @@
 - <https://www.r-project.org/>
 
 ### R Studio
+
 - <https://rstudio.com/products/rstudio/download/>
 
 ### Twitter Credentials
