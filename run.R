@@ -8,21 +8,21 @@ source("data-transform.R")
 word <- "trump"
 
 # [integer] The maximum number of tweets to scrape. May scrape fewer if not enough tweets match the topic.
-n <- 100
+n <- 400
 
 # [integer] The number of most common words to retrieve
 common_word_count <- 20
 
 # [character] If not NULL, restricts tweets to those since the given date.
 # Date is to be formatted as YYYY-MM-DD
-since <- "2020-11-24"
+since <- "2020-11-22"
 
 # [character] If not NULL, restricts tweets to those up until the given date.
 # Date is to be formatted as YYYY-MM-DD
 until <- "2020-11-25"
 
 # [boolean] If TRUE, will scrape tweets live from the twitter. If FALSE, will retrieve tweet data from tweets_raw.csv
-live <- FALSE
+live <- TRUE
 
 # ====================== SCRAPING ========================
 data <- scrape_tweets(word, n, common_word_count, since, until, live)

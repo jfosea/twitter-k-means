@@ -13,7 +13,7 @@ sapply(all_pkgs, library, character.only=TRUE, logical.return=TRUE)
 
 ## Dataset Previews
 
-We will use three datasets scraped from Twitter on November 22, 2020 using $n=100$ tweets.
+We will use three datasets scraped from Twitter from November 22, 2020 to November 25, 2020 using $n=400$ tweets.
 
 1. Raw Scraped Dataset
     
@@ -22,22 +22,17 @@ We will use three datasets scraped from Twitter on November 22, 2020 using $n=10
     source("data-transform.R")
     
     # [character] The topic word to search tweets by.
-    word <- "biden"
+    word <- "trump"
     
     # [integer] The maximum number of tweets to scrape. May scrape fewer if not enough tweets match the topic.
-<<<<<<< HEAD
-    n <- 100
-    
-=======
     n <- 400
 
->>>>>>> d95632eb08a9338113a3fb713953effbcb5d05bf
     # [integer] The number of most common words to retrieve
     common_word_count <- 20
     
     # [character] If not NULL, restricts tweets to those since the given date.
     # Date is to be formatted as YYYY-MM-DD
-    since <- "2020-11-24"
+    since <- "2020-11-22"
     
     # [character] If not NULL, restricts tweets to those up until the given date.
     # Date is to be formatted as YYYY-MM-DD
@@ -95,17 +90,26 @@ p4 <- fviz_cluster(k5, geom = "point",  data = df) + ggtitle("k = 5")
 grid.arrange(p1, p2, p3, p4, nrow = 2)
 ```
 
-We choose $k=3$ as our chosen number of clusters and we will now analyze.
+We choose $k=2$ as our chosen number of clusters and we will now analyze.
 
 ## $k=2$ Means Clustering Analysis
 
 #### Variation Between, Within and Total
 
 ```{r, echo=FALSE}
-data.frame("Sum of Squares"= c("Between", "Total"), Values=c(k3$betweenss, k3$totss)) %>% kbl() %>%
-kable_styling()
-data.frame(Cluster= c(1,2,3),'Within Sum of Squares' =c(k3$withinss)) %>% kbl() %>%
-kable_styling()
+k3 <- k2
+if (length((k3$withinss)) == 2) {
+  data.frame("Sum of Squares"= c("Between", "Total"), Values=c(k3$betweenss, k3$totss)) %>% kbl() %>%
+  kable_styling()
+  data.frame(Cluster= c(1,2),'Within Sum of Squares' =c(k3$withinss)) %>% kbl() %>%
+  kable_styling()
+
+} else if (length(k3$withinss) == 3) {
+  data.frame("Sum of Squares"= c("Between", "Total"), Values=c(k3$betweenss, k3$totss)) %>% kbl() %>%
+  kable_styling()
+  data.frame(Cluster= c(1,2,3),'Within Sum of Squares' =c(k3$withinss)) %>% kbl() %>%
+  kable_styling()
+}
 ```
 
 #### 1. Common Words
