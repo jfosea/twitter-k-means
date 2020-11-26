@@ -49,6 +49,9 @@ grid.arrange(p1, p2, p3, p4, nrow = 2)
 # ======================= ANALYSIS =======================
 
 # some basic clustering statistics
+# To change the cluster (k) to use for the rest of the analysis, assign that cluster to k3
+# eg. To change to k = 2
+#   k3 <- k2
 k3
 
 
