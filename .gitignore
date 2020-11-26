@@ -47,3 +47,10 @@ docs/
 # translation temp files
 po/*~
 .Rproj.user
+
+# Latex
+debug.log
+output.log
+output.tex
+output_files
+tweets_raw.csv
