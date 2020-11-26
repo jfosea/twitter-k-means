@@ -5,7 +5,7 @@ source("data-transform.R")
 # ======================= INPUT =========================
 
 # [character] The topic word to search tweets by.
-word <- "#trump"
+word <- "trump"
 
 # [integer] The maximum number of tweets to scrape. May scrape fewer if not enough tweets match the topic.
 n <- 100
@@ -67,7 +67,7 @@ p_hashtags <- ggplot(hashtags, aes(x = reorder(Hashtags, n, function(n) -n), y=n
   geom_bar(stat="identity", fill="darkblue")+ theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
   xlab("") + ggtitle("Most Common Hashtags")
 p_hashtags
-
+View(hashtags)
 
 # compare scores in each cluster
 p6 <- count(tweets, cluster, score) %>% ggplot( aes(fill=score, y=n, x=cluster)) +
