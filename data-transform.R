@@ -48,8 +48,16 @@ process_tweets <- function(topic, tweets, number_of_tweets) {
   tweet_words_clean <- tweet_words %>% anti_join(my_stop_words)
   common_words <- tweet_words_clean %>% count(word, sort=TRUE) %>% head(10)
   
-  hashtags <- tweet_words_clean %>% filter(substr(word,1,1) == "#") %>% count(word, sort=TRUE)
-
+  
+  # Count top 10 most frequent hashtags
+  hashtags <- list()
+  for (i in 1:10) {
+    hashtags <-  append(hashtags, str_extract_all(tolower(tweets$text[i]), "#\\S+"))
+  }
+  
+  
+  hashtags_count <- count(data.frame(Hashtags=unlist(hashtags)),Hashtags, sort=TRUE) %>% head(10)
+  
   # adding score column if tweet contains common words
   score <- rep(0, number_of_tweets)
   for (i in 1:nrow(common_words)) {
@@ -69,9 +77,8 @@ process_tweets <- function(topic, tweets, number_of_tweets) {
   # transform different categorical values into numerics
   tweets_num$isRetweet <- as.numeric(tweets$isRetweet)
   tweets_num$created <- as.numeric(tweets$created)
-
-  # scale and return dataframe
-  return(list(tweets, scale(tweets_num), common_words, hashtags))
+  
+  return(list(tweets, scale(tweets_num), common_words, hashtags_count))
 
 }
 
