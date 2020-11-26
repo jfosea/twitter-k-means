@@ -52,12 +52,12 @@ process_tweets <- function(topic, tweets, number_of_tweets, common_word_count) {
   
   # Count top 10 most frequent hashtags
   hashtags <- list()
-  for (i in 1:10) {
+  for (i in 1:nrow(tweets)) {
     hashtags <-  append(hashtags, str_extract_all(tolower(tweets$text[i]), "#\\S+"))
   }
   
-  
   hashtags_count <- count(data.frame(Hashtags=unlist(hashtags)),Hashtags, sort=TRUE) %>% head(10)
+  View(hashtags_count)
   
   # adding score column if tweet contains common words
   score <- rep(0, number_of_tweets)

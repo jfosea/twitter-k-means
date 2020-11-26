@@ -8,7 +8,7 @@ source("data-transform.R")
 word <- "#trump"
 
 # [integer] The maximum number of tweets to scrape. May scrape fewer if not enough tweets match the topic.
-n <- 10
+n <- 100
 
 # [integer] The number of most common words to retrieve
 common_word_count <- 20
