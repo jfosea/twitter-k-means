@@ -1,7 +1,7 @@
 ---
 title: "Using k-Means to Cluster Tweets"
 author: "Jana Osea and Evan Quan"
-date: "November 24, 2020"
+date: "November 25, 2020"
 output:
   html_document: default
 ---
@@ -21,39 +21,62 @@ We will use three datasets scraped from Twitter on November 22, 2020 using $n=10
 source("tweet-scraping.R")
 source("data-transform.R")
 
+
 # ======================= INPUT =========================
+
+# [character] The topic word to search tweets by.
 word <- "biden"
+
+# [integer] The maximum number of tweets to scrape. May scrape fewer if not enough tweets match the topic.
 n <- 100
-data <- scrape_tweets(word, n, live=FALSE)
+
+# [integer] The number of most common words to retrieve
+common_word_count <- 20
+
+# [character] If not NULL, restricts tweets to those since the given date.
+# Date is to be formatted as YYYY-MM-DD
+since <- "2020-11-24"
+
+# [character] If not NULL, restricts tweets to those up until the given date.
+# Date is to be formatted as YYYY-MM-DD
+until <- "2020-11-25"
+
+# [boolean] If TRUE, will scrape tweets live from the twitter. If FALSE, will retrieve tweet data from tweets_raw.csv
+live <- TRUE
+
+# ====================== SCRAPING ========================
+data <- scrape_tweets(word, n, common_word_count, since, until, live)
 tweets <- as.data.frame(data[1])
 df <- as.data.frame(data[2])
 common_words <- as.data.frame(data[3])
+hashtags <- as.data.frame(data[4])
+number_of_tweets <- as.integer(data[5])
 ```
 
 
-    ```{r, echo=FALSE}
-    head(tweets, 3) %>%
-      kbl() %>%
-      kable_styling()
-    ```
+```{r, echo=FALSE}
+head(tweets, 3) %>%
+  kbl() %>%
+  kable_styling()
+```
 
 2. Processed Scaled Tweets
 
-    ```{r, echo=FALSE}
-    head(df, 3) %>%
-      kbl() %>%
-      kable_styling()
-    ```
+```{r, echo=FALSE}
+head(df, 3) %>%
+  kbl() %>%
+  kable_styling()
+```
 
 3. Top 10 Common Words
 
-    ```{r, echo=FALSE}
-    head(common_words, 3) %>%
-      kbl() %>%
-      kable_styling()
-    ```
-    
-## k-Means Clustering 
+```{r, echo=FALSE}
+head(common_words, 3) %>%
+  kbl() %>%
+  kable_styling()
+```
+
+## k-Means Clustering
 
 We plotted the cluster plots with $k=2,3,4,5$ clusters correspondingly.
 ```{r, echo=FALSE}
@@ -86,26 +109,39 @@ kable_styling()
 #### 1. Common Words
 
 ```{r, echo=FALSE}
+# add cluster group number variable
 tweets$cluster <- k3$cluster
+
 # plot of 10 most common words
-p5 <- ggplot(common_words, aes(x = reorder(word, n, function(n) -n), y=n)) + 
+p5 <- ggplot(common_words, aes(x = reorder(word, n, function(n) -n), y=n)) +
   geom_bar(stat="identity", fill="lightblue")+ theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
-  xlab("") + ggtitle("Top 10 Most Common Words")
+  xlab("") + ggtitle(paste("Top", common_word_count, "Most Common Words"))
 p5
 ```
-    
-#### 2. Hot Word Scores
+
+#### 2. Common Hashtags
 
 ```{r, echo=FALSE}
-p6 <- count(tweets, cluster, score) %>% ggplot( aes(fill=score, y=n, x=cluster)) + 
-  geom_bar(position="stack", stat="identity")+theme_minimal() + 
+# plot hashtags
+p_hashtags <- ggplot(hashtags, aes(x = reorder(word, n, function(n) -n), y=n)) +
+  geom_bar(stat="identity", fill="lightblue")+ theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+  xlab("") + ggtitle("Most Common Hashtags")
+p_hashtags
+```
+
+#### 3. Hot Word Scores
+
+```{r, echo=FALSE}
+p6 <- count(tweets, cluster, score) %>% ggplot( aes(fill=score, y=n, x=cluster)) +
+  geom_bar(position="stack", stat="identity")+theme_minimal() +
   ggtitle("Score Distribution Grouped by Clusters")
 p6
 ```
 
-#### 3. Compare Characteristics of Each Cluster
+#### 4. Compare Characteristics of Each Cluster
 
 ```{r, echo=FALSE}
+# compare retweet count in each cluster
 p7 <- quantile_plot(tweets$retweetCount, tweets$cluster) + ggtitle("Retweet Count")
 # compare follower count in each cluster
 p7
@@ -114,16 +150,27 @@ p8
 # compare total tweets count in each cluster
 p9 <- quantile_plot(tweets$total_tweets, tweets$cluster) + ggtitle("Total Tweets Count")
 p9
-grid.arrange(p7, p8, p9, nrow = 2)
+# compare tweet length in each cluster
+p10 <- quantile_plot(tweets$tweet_length, tweets$cluster) + ggtitle("Tweet Length")
+p10
+# compare like count in each cluster
+p11 <- quantile_plot(tweets$favoriteCount, tweets$cluster) + ggtitle("Likes Count")
+p11
+
+
+grid.arrange(p6, p_hashtags, p7, p8, p9, p10, p11, nrow = 3)
 ```
 
 
-#### 4. Top 5 Nearest Tweets to Each Centroid Cluster
+#### 5. Top 5 Nearest Tweets to Each Centroid Cluster
 
 ```{r, echo=FALSE}
 top_5 <- top_n_tweets(tweets,k3,5)
-top_5 %>% group_by(cluster) %>% select(screenName, followers, total_tweets, location, score) %>% kbl() %>%
+top_5 %>% group_by(cluster) %>% select(screenName, followers, total_tweets, location, score)
 kable_styling()
 ```
 
 
+#### 6. Interesting articles
+
+- <https://techcrunch.com/2018/10/30/twitters-doubling-of-character-count-from-140-to-280-had-little-impact-on-length-of-tweets/?guccounter=1&guce_referrer=aHR0cHM6Ly93d3cuZ29vZ2xlLmNvbS8&guce_referrer_sig=AQAAADLPXz77Frp-eFYRiGeklVoQMoYBcAQvDzda0-UtsPT1p9pzc40m2Sj0P2_vJ3RxxABYGCoDCBKPVtuezpWg6REwSwrmVBSvfequY1e-kmuFwV2KYz7NR8qJXubEhGsdguFFZGLSTb7WLb6WJt0K5dkkP6Gxg55W28ZJVHOatdpi>
