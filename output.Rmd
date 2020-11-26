@@ -22,7 +22,7 @@ We will use three datasets scraped from Twitter on November 22, 2020 using $n=10
     source("data-transform.R")
 
     # [character] The topic word to search tweets by.
-    word <- "biden"
+    word <- "trump"
 
     # [integer] The maximum number of tweets to scrape. May scrape fewer if not enough tweets match the topic.
     n <- 100
