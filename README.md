@@ -17,7 +17,11 @@ through the following links:
 
 In order to connect to the Twitter API to scrape live twitter data:
 
-- Place `credentials.csv` at the root directory of the repository.
+- Place `credentials.csv` at the root directory of the repository, containing 1 row with the following columns:
+    1. consumer key
+    2. consumer secret
+    3. access token
+    4. access secret
 
 ## Setup
 
