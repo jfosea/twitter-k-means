@@ -48,16 +48,16 @@ process_tweets <- function(topic, tweets, number_of_tweets, common_word_count) {
   # Filter out stop words
   tweet_words_clean <- tweet_words %>% anti_join(my_stop_words)
   common_words <- tweet_words_clean %>% count(word, sort=TRUE) %>% head(common_word_count)
-  
-  
+
+
   # Count top 10 most frequent hashtags
   hashtags <- list()
   for (i in 1:nrow(tweets)) {
     hashtags <-  append(hashtags, str_extract_all(tolower(tweets$text[i]), "#\\S+"))
   }
-  
+
   hashtags_count <- count(data.frame(Hashtags=unlist(hashtags)),Hashtags, sort=TRUE) %>% head(10)
-  
+
   # adding score column if tweet contains common words
   score <- rep(0, number_of_tweets)
   for (i in 1:nrow(common_words)) {
@@ -77,7 +77,7 @@ process_tweets <- function(topic, tweets, number_of_tweets, common_word_count) {
   # transform different categorical values into numerics
   tweets_num$isRetweet <- as.numeric(tweets$isRetweet)
   tweets_num$created <- as.numeric(tweets$created)
-  
+
   return(list(tweets, scale(tweets_num), common_words, hashtags_count))
 
 }
@@ -116,37 +116,40 @@ quantile_plot <- function(col1, col2) {
   cluster <- col2
   data <- data.frame(count_col, cluster)
   xs <- unique(ceiling(quantile(count_col,c(1/4,1/2,3/4,1))))
+
   print(length(xs))
+
   if (length(xs)==2) {
     xs <- unique(ceiling(quantile(count_col,c(1/2,1))))
-    label1 <- paste("0 -", xs[2] - 1)
-    label2 <- paste(">=" ,xs[2])
+    label1 <- ifelse(xs[1] == 0, 0, paste("0 -", xs[1]))
+    label2 <- ifelse(xs[1] + 1 == xs[2], xs[2], paste(xs[1] + 1,"-", xs[2]))
+
     data <- data %>% mutate(name=cut(count_col,
                                      breaks=c(-1,xs,Inf), labels=c(label1, label2, "")))
     p <- count(data, cluster, name) %>% ggplot( aes(fill=name, y=n, x=cluster)) +
       geom_bar(position="stack", stat="identity")+theme_minimal()
   } else if (length(xs)==3) {
     xs <- unique(ceiling(quantile(count_col,c(1/3,2/3,1))))
-    label1 <- paste("0 -", xs[2] - 1)
-    label2 <- paste(xs[2],"-", xs[3] - 1)
-    label3 <- paste(">=" ,xs[3])
+    label1 <- ifelse(xs[1] == 0, 0, paste("0 -", xs[1]))
+    label2 <- ifelse(xs[1] + 1 == xs[2], xs[2], paste(xs[1] + 1,"-", xs[2]))
+    label3 <- ifelse(xs[2] + 1 == xs[3], xs[4], paste(xs[2] + 1,"-", xs[3]))
+
     data <- data %>% mutate(name=cut(count_col,
                                      breaks=c(-1,xs,Inf), labels=c(label1, label2, label3, "")))
     p <- count(data, cluster, name) %>% ggplot( aes(fill=name, y=n, x=cluster)) +
       geom_bar(position="stack", stat="identity")+theme_minimal()
   } else {
-    label1 <- paste("0 -", xs[2] - 1)
-    label2 <- paste(xs[2],"-", xs[3] - 1)
-    label3 <- paste(xs[3],"-", xs[4] - 1)
-    label4 <- paste(">=", xs[4])
+    label1 <- ifelse(xs[1] == 0, 0, paste("0 -", xs[1]))
+    label2 <- ifelse(xs[1] + 1 == xs[2], xs[2], paste(xs[1] + 1,"-", xs[2]))
+    label3 <- ifelse(xs[2] + 1 == xs[3], xs[4], paste(xs[2] + 1,"-", xs[3]))
+    label4 <- ifelse(xs[3] + 1 == xs[4], xs[4], paste(xs[3] + 1,"-", xs[4]))
+
     data <- data %>% mutate(name=cut(count_col,
                                      breaks=c(-1,xs,Inf), labels=c(label1, label2, label3, label4, "")))
     p <- count(data, cluster, name) %>% ggplot( aes(fill=name, y=n, x=cluster)) +
       geom_bar(position="stack", stat="identity")+theme_minimal()
   }
-  
+
   print(xs)
   return(p)
-  
-
 }

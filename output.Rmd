@@ -16,31 +16,31 @@ sapply(all_pkgs, library, character.only=TRUE, logical.return=TRUE)
 We will use three datasets scraped from Twitter on November 22, 2020 using $n=100$ tweets.
 
 1. Raw Scraped Dataset
-    
+
     ```{r, include=FALSE}
     source("tweet-scraping.R")
     source("data-transform.R")
-    
+
     # [character] The topic word to search tweets by.
     word <- "biden"
-    
+
     # [integer] The maximum number of tweets to scrape. May scrape fewer if not enough tweets match the topic.
     n <- 100
-    
+
     # [integer] The number of most common words to retrieve
     common_word_count <- 20
-    
+
     # [character] If not NULL, restricts tweets to those since the given date.
     # Date is to be formatted as YYYY-MM-DD
     since <- "2020-11-24"
-    
+
     # [character] If not NULL, restricts tweets to those up until the given date.
     # Date is to be formatted as YYYY-MM-DD
     until <- "2020-11-25"
-    
+
     # [boolean] If TRUE, will scrape tweets live from the twitter. If FALSE, will retrieve tweet data from tweets_raw.csv
     live <- FALSE
-    
+
     # ====================== SCRAPING ========================
     data <- scrape_tweets(word, n, common_word_count, since, until, live)
     tweets <- as.data.frame(data[1])
@@ -50,7 +50,7 @@ We will use three datasets scraped from Twitter on November 22, 2020 using $n=10
     number_of_tweets <- as.integer(data[5])
     ```
 
-    
+
     ```{r, echo=FALSE}
     head(tweets, 3) %>%
       kbl() %>%
@@ -108,7 +108,7 @@ kable_styling()
   ```{r, echo=FALSE}
   # add cluster group number variable
   tweets$cluster <- k3$cluster
-  
+
   # plot of 10 most common words
   p5 <- ggplot(common_words, aes(x = reorder(word, n, function(n) -n), y=n)) +
     geom_bar(stat="identity", fill="lightblue")+ theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
@@ -127,7 +127,7 @@ kable_styling()
   ```
 
 #### 3. Hot Word Scores
-    
+
   ```{r, echo=FALSE}
   p6 <- count(tweets, cluster, score) %>% ggplot( aes(fill=score, y=n, x=cluster)) +
     geom_bar(position="stack", stat="identity")+theme_minimal() +
@@ -153,8 +153,8 @@ kable_styling()
   # compare like count in each cluster
   p11 <- quantile_plot(tweets$favoriteCount, tweets$cluster) + ggtitle("Likes Count")
   p11
-  
-  
+
+
   grid.arrange(p6, p_hashtags, p7, ncol = 2)
   grid.arrange(p7, p8,ncol = 2)
   grid.arrange(p9, p10, ncol = 2)

@@ -15,8 +15,5 @@ to_install <- setdiff(all_pkgs, already_installed)
 if (length(to_install) > 0) {
   install.packages(to_install, dependencies=TRUE)
 }
-
-update.packages(ask=FALSE)
-
 #' Loads all corresponding packages
 sapply(all_pkgs, library, character.only=TRUE, logical.return=TRUE)
