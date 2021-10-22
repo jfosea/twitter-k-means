@@ -1,5 +1,8 @@
 # twitter-k-means
 
+## Description
+This repository stores the analysis work my partner and I did on live scraped Tweets in November 2020. We performed k means algorithm of the data and described the results.
+
 ## Requirements
 
 This program requires R and RStudio, which can be downloaded and installed
